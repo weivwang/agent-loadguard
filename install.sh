@@ -1,13 +1,36 @@
 #!/bin/sh
 # Install loadguard: the CLI, the agent skill, and the Claude Code hook.
 #
-#   ./install.sh              copy into place
+#   curl -fsSL https://raw.githubusercontent.com/weivwang/agent-loadguard/main/install.sh | sh
+#   ./install.sh              copy into place (from a clone)
 #   ./install.sh --link       symlink instead (follow a git checkout)
 #   ./install.sh --no-hook    CLI + skill only
 #   ./install.sh --uninstall  remove all three
+#
+# Piped through sh, it keeps a copy of the repository in $LOADGUARD_HOME and
+# links to it; running the same line again updates it.
 set -eu
 
+repo=${LOADGUARD_REPO:-https://github.com/weivwang/agent-loadguard}
 here=$(cd "$(dirname "$0")" && pwd)
+
+if [ ! -f "$here/bin/loadguard" ] || [ ! -f "$here/install.sh" ]; then
+  src=${LOADGUARD_HOME:-"$HOME/.local/share/agent-loadguard"}
+  if command -v git >/dev/null; then
+    if [ -d "$src/.git" ]; then
+      git -C "$src" pull --quiet --ff-only
+    else
+      rm -rf "$src"
+      git clone --quiet --depth 1 "$repo" "$src"
+    fi
+  else
+    rm -rf "$src"
+    mkdir -p "$src"
+    curl -fsSL "$repo/archive/refs/heads/main.tar.gz" | tar -xz -C "$src" --strip-components 1
+  fi
+  echo "source:    $src ($(git -C "$src" rev-parse --short HEAD 2>/dev/null || echo tarball))"
+  exec sh "$src/install.sh" --link "$@"
+fi
 bin_dir=${LOADGUARD_BIN_DIR:-"$HOME/.local/bin"}
 claude_dir=${CLAUDE_CONFIG_DIR:-"$HOME/.claude"}
 codex_dir=${CODEX_HOME:-"$HOME/.codex"}
@@ -64,6 +87,8 @@ if [ "$action" = uninstall ]; then
   rm -f "$bin_dir/loadguard"
   rm -rf "$claude_dir/skills/loadguard" "$codex_dir/skills/loadguard"
   [ -f "$claude_dir/settings.json" ] && edit_hook remove
+  managed=${LOADGUARD_HOME:-"$HOME/.local/share/agent-loadguard"}
+  [ "$mode" = link ] && [ "$(cd "$managed" 2>/dev/null && pwd)" = "$here" ] && rm -rf "$managed"
   echo "loadguard removed (settings.json backup: $claude_dir/settings.json.loadguard-backup)"
   exit 0
 fi
