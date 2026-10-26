@@ -1,0 +1,17 @@
+{
+  "description": "Send unguarded heavy Bash commands back to the agent with the guarded command to run instead",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/loadguard\" hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

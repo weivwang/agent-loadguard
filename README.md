@@ -31,14 +31,28 @@ Single file, Python 3.9+ standard library, no daemon.
 
 ## Install
 
-```bash
-git clone https://github.com/weivwang/agent-loadguard.git
-cd agent-loadguard
-./install.sh          # CLI → ~/.local/bin, skill → ~/.claude/skills (+ ~/.codex/skills), hook → ~/.claude/settings.json
+Needs macOS or Linux and Python 3.9+ (macOS's `python3` is enough). Pick **one**:
+
+**Claude Code plugin** — type this in a Claude Code session (2.1.275+):
+
+```
+/plugin install loadguard --marketplace weivwang/agent-loadguard
 ```
 
-`./install.sh --link` symlinks instead of copying, `--no-hook` skips the hook,
-`--uninstall` removes everything (a backup of `settings.json` is kept).
+The hook, the skill and the `loadguard` command come with the plugin; updates
+come through `/plugin`. On older versions:
+`/plugin marketplace add weivwang/agent-loadguard`, then `/plugin install loadguard@agent-loadguard`.
+
+**One line, any agent** — also installs the skill for Codex and puts
+`loadguard` on your own shell's PATH:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/weivwang/agent-loadguard/main/install.sh | sh
+```
+
+Run the same line again to update. Add `| sh -s -- --no-hook` to skip the
+Claude Code hook, `| sh -s -- --uninstall` to remove everything (a backup of
+`settings.json` is kept). From a clone, `./install.sh` does the same.
 New Claude Code sessions pick the hook up.
 
 For agents without hooks (Codex, Cursor, …), the skill tells them when and how
@@ -130,7 +144,7 @@ classification on both heavy commands and look-alikes (`grep pytest`,
 
 ## 中文简介
 
-多个编程 Agent 同时在一台电脑上跑时，经常有两个同时开测试，或者一次测试不受限地起 worker，把内存吃光、整机卡死。`loadguard` 让测试、构建、类型检查这类“重活”排队领全机共享的名额，内存不够就先等；运行时把它开出的整棵进程树（包括脱离出去的子进程）的内存加起来，超过上限或整机快耗尽时连根停掉，并告诉 Agent 原因和下一步怎么做。Claude Code 里有 hook 自动拦截没走 loadguard 的重命令，其他 Agent 靠 skill 说明使用。安装：`./install.sh`。
+多个编程 Agent 同时在一台电脑上跑时，经常有两个同时开测试，或者一次测试不受限地起 worker，把内存吃光、整机卡死。`loadguard` 让测试、构建、类型检查这类“重活”排队领全机共享的名额，内存不够就先等；运行时把它开出的整棵进程树（包括脱离出去的子进程）的内存加起来，超过上限或整机快耗尽时连根停掉，并告诉 Agent 原因和下一步怎么做。Claude Code 里有 hook 自动拦截没走 loadguard 的重命令，其他 Agent 靠 skill 说明使用。安装（二选一）：在 Claude Code 里输入 `/plugin install loadguard --marketplace weivwang/agent-loadguard`；或在终端运行 `curl -fsSL https://raw.githubusercontent.com/weivwang/agent-loadguard/main/install.sh | sh`（同时给 Codex 装 skill，重跑即升级）。
 
 ## License
 

@@ -1,0 +1,10 @@
+{
+  "name": "loadguard",
+  "description": "Stop parallel coding agents from freezing your computer: heavy commands queue for memory and are stopped with everything they spawned before they exhaust RAM.",
+  "version": "0.1.0",
+  "author": { "name": "Will Wang", "url": "https://github.com/weivwang" },
+  "homepage": "https://github.com/weivwang/agent-loadguard",
+  "repository": "https://github.com/weivwang/agent-loadguard",
+  "license": "MIT",
+  "keywords": ["memory", "oom", "parallel agents", "test runner", "hooks"]
+}

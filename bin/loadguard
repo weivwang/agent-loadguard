@@ -735,6 +735,10 @@ def _program_name():
     found = shutil.which("loadguard")
     if found and os.path.realpath(found) == me:
         return "loadguard"
+    plugin_root = os.environ.get("CLAUDE_PLUGIN_ROOT")
+    if plugin_root and me == os.path.realpath(os.path.join(plugin_root, "bin", "loadguard")):
+        # Claude Code puts a plugin's bin/ on the Bash tool's PATH (not the hook's).
+        return "loadguard"
     return shlex.quote(me)
 
 

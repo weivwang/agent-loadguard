@@ -154,6 +154,17 @@ class Hook(Env):
         self.assertEqual(decision["permissionDecision"], "deny")
         self.assertIn("run -- npm test", decision["permissionDecisionReason"])
 
+    def test_suggestion_names_a_runnable_program(self):
+        payload = {"tool_name": "Bash", "tool_input": {"command": "npm test"}}
+        bare = dict(PATH="/usr/bin:/bin")
+        reason = lambda env: json.loads(self.hook(payload, env).stdout)["hookSpecificOutput"][
+            "permissionDecisionReason"]
+        # off PATH: the absolute path, so the agent can still run it
+        self.assertIn("%s run -- npm test" % os.path.realpath(PROGRAM), reason(bare))
+        # as a Claude Code plugin, bin/ is on the Bash tool's PATH
+        self.assertIn("\nloadguard run -- npm test",
+                      reason(dict(bare, CLAUDE_PLUGIN_ROOT=ROOT)))
+
     def test_allows_light_and_other_tools(self):
         for payload in ({"tool_name": "Bash", "tool_input": {"command": "git status"}},
                         {"tool_name": "Read", "tool_input": {"file_path": "pytest"}}):

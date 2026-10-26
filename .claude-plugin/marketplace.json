@@ -1,0 +1,17 @@
+{
+  "name": "agent-loadguard",
+  "owner": { "name": "Will Wang", "url": "https://github.com/weivwang" },
+  "metadata": {
+    "description": "Memory-aware queue and ceiling for heavy commands run by parallel coding agents",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "loadguard",
+      "source": "./",
+      "description": "Heavy commands (tests, builds, type checks) queue for machine-wide slots and are stopped with their whole process tree before they exhaust RAM.",
+      "category": "monitoring",
+      "tags": ["memory", "oom", "hooks", "testing"]
+    }
+  ]
+}
