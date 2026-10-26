@@ -102,8 +102,8 @@ one package or test file) or wait for other work (`loadguard status`).
 - Nested `loadguard run` inside a guarded command runs directly, so scripts that
   call it never deadlock on their own slot.
 
-Tested on macOS (Apple silicon). Linux support (`/proc` memory, `MemAvailable`)
-is implemented but not yet exercised by CI — reports welcome.
+CI runs the full suite, including the real memory-hog test, on macOS and Linux
+with Python 3.9 and 3.12.
 
 ## How it works
 
